@@ -8,6 +8,15 @@ Changes are tagged: **[wrapper]** for Python/JS wrapper, **[binary]** for Chromi
 
 ## [Unreleased]
 
+## [0.3.32] — 2026-06-20
+
+- **[wrapper]** **Security**: Windows binary extraction — pass archive/destination paths to PowerShell via env vars instead of interpolating into the `-Command` string, closing a code-injection shape on paths containing single quotes (e.g. `C:\Users\O'Brien`)
+- **[wrapper]** Widevine: auto-seed CDM hint file for persistent contexts on Linux, so DRM playback works without manual pre-seeding
+- **[wrapper]** `cloakserve`: rewrite CDP WebSocket URLs so clients connect through the proxy correctly (thanks [@honor2030](https://github.com/honor2030), #234)
+- **[wrapper]** `cloakserve`: add idle cleanup for seeded profiles (thanks [@Kumario1](https://github.com/Kumario1), #352)
+- **[meta]** Fix `recaptcha_score.py` example — wait for the reCAPTCHA score to render before screenshot (thanks [@igo](https://github.com/igo) for the report, #374)
+- **[meta]** Bump GitHub Actions in the actions group (#358)
+
 ## [0.3.31] — 2026-05-26
 
 - **[wrapper]** Route HTTP proxy credentials through `--proxy-server` flag, removing the need for Playwright's proxy auth handler on HTTP proxies
