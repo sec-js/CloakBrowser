@@ -74,6 +74,27 @@ describe("maybeResolveGeoip", () => {
     expect(fetchSpy.mock.calls[0][1]).toEqual({ redirect: "follow" });
   });
 
+  it("no proxy: resolves the machine's own public IP directly for WebRTC", async () => {
+    // Both tz/locale explicit → maybeResolveGeoip resolves exit IP only,
+    // via a direct fetch to the echo services (no proxy).
+    const fetchSpy = vi.spyOn(globalThis, "fetch").mockResolvedValue({
+      ok: true,
+      text: async () => "5.6.7.8",
+    } as Response);
+
+    const result = await maybeResolveGeoip({
+      geoip: true,
+      timezone: "Europe/Berlin",
+      locale: "de-DE",
+    });
+
+    expect(result).toEqual({ timezone: "Europe/Berlin", locale: "de-DE", exitIp: "5.6.7.8" });
+    // Direct fetch to an echo service, not a proxied request
+    expect(fetchSpy).toHaveBeenCalled();
+    expect(fetchSpy.mock.calls[0][0]).toBe("https://api.ipify.org");
+    fetchSpy.mockRestore();
+  });
+
   it("returns quickly when GeoIP resolution times out", async () => {
     const cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), "cloak-geoip-timeout-"));
     tempDirs.push(cacheDir);

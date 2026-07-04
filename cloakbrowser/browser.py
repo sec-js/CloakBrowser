@@ -1002,19 +1002,21 @@ def maybe_resolve_geoip(
     timezone: str | None,
     locale: str | None,
 ) -> tuple[str | None, str | None, str | None]:
-    """Auto-fill timezone/locale from proxy IP when geoip is enabled.
+    """Auto-fill timezone/locale from the egress IP when geoip is enabled.
 
     Returns ``(timezone, locale, exit_ip)``.  *exit_ip* is a free bonus
     from the geoip lookup (no extra HTTP call) — used for WebRTC spoofing.
+
+    With a proxy the egress IP is the proxy's exit IP; with no proxy it is
+    the machine's own public IP, so geoip works proxy-free too.
     """
-    if not geoip or not proxy:
+    if not geoip:
         return timezone, locale, None
 
     from .geoip import resolve_proxy_exit_ip, resolve_proxy_geo_with_ip
 
-    proxy_url = _extract_proxy_url(proxy)
-    if not proxy_url:
-        return timezone, locale, None
+    # None when no proxy → echo services resolve the machine's own public IP
+    proxy_url = _extract_proxy_url(proxy) if proxy else None
 
     # When both tz/locale are explicit, still resolve exit IP for WebRTC
     if timezone is not None and locale is not None:

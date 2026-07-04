@@ -179,18 +179,19 @@ public static class CloakLauncher
     // -----------------------------------------------------------------------
 
     /// <summary>
-    /// Auto-fill timezone/locale from the proxy IP when geoip is enabled. Returns
+    /// Auto-fill timezone/locale from the egress IP when geoip is enabled. Returns
     /// (timezone, locale, exitIp). The exit IP is a free bonus used for WebRTC spoofing.
+    /// With a proxy the egress IP is the proxy's exit IP; with no proxy it is the
+    /// machine's own public IP, so geoip works proxy-free too.
     /// </summary>
     public static async Task<(string? Timezone, string? Locale, string? ExitIp)> MaybeResolveGeoIpAsync(
         bool geoip, object? proxy, string? timezone, string? locale)
     {
-        if (!geoip || proxy == null)
+        if (!geoip)
             return (timezone, locale, null);
 
-        string? proxyUrl = ProxyResolver.ExtractProxyUrl(proxy);
-        if (string.IsNullOrEmpty(proxyUrl))
-            return (timezone, locale, null);
+        // null when no proxy -> echo services resolve the machine's own public IP.
+        string? proxyUrl = proxy != null ? ProxyResolver.ExtractProxyUrl(proxy) : null;
 
         // When both tz/locale are explicit, still resolve the exit IP for WebRTC.
         if (timezone != null && locale != null)
