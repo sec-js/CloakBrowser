@@ -8,8 +8,11 @@ Changes are tagged: **[wrapper]** for Python/JS wrapper, **[binary]** for Chromi
 
 ## [Unreleased]
 
+## [0.4.11] — 2026-07-16
+
 - **[wrapper]** When the Pro binary refuses a launch for a license reason, `launch()` now raises a clear `CloakBrowserLicenseError` (invalid, expired, or missing key; session limit reached; license server unreachable; or a local config problem) instead of an opaque "target/browser closed" error. Non-license launch failures are re-raised unchanged. New exported `CloakBrowserLicenseError` type. Python, JavaScript, Puppeteer, and .NET.
 - **[wrapper]** Authenticated HTTP/HTTPS proxies now use the browser's native proxy authentication on every platform whose binary supports it — resolved per platform and binary version — and fall back to the standard proxy path on older binaries that don't. Fixes credentialed HTTP/HTTPS proxies on macOS and ARM, which previously could not use the native path. Python, JavaScript, Puppeteer, and .NET.
+- **[wrapper]** `cloakbrowser info` now shows the number of Pro sessions currently in use ("Sessions: N seats in use") for a valid Pro license, so you can see how many concurrent sessions are running without contacting support. The count is never cached, skipped under `--quick`, and reports "unavailable" rather than a guessed number when it cannot be determined. Python, JS, and .NET.
 
 ## [0.4.10] — 2026-07-09
 
