@@ -6,6 +6,10 @@ Changes are tagged: **[wrapper]** for Python/JS wrapper, **[binary]** for Chromi
 
 ---
 
+## [0.5.1] — 2026-07-23
+
+- **[wrapper]** Fix GeoIP exit-IP resolution through authenticated HTTP proxies in the JavaScript wrapper. The CONNECT request sent the proxy's address in the `Host` header instead of the tunnel target, which strict proxies (e.g. Oxylabs backconnect) reject; the wrapper then silently fell back to the proxy gateway's location, producing a wrong timezone/locale for the session's real exit IP. The `Host` header now names the tunnel target per RFC 9110. JavaScript only; Python and .NET were unaffected.
+
 ## [0.5.0] — 2026-07-22
 
 - **[wrapper]** **Free tier via GitHub sign-in.** New `cloakbrowser login` command: sign in with GitHub to get a free license key (or save a paid key), `cloakbrowser logout` to revert. The launch banner and `cloakbrowser info` are now tier-aware (keyless / free / pro). Free keys always track the latest free build. Python, JavaScript, and .NET.
